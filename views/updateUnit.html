@@ -1,12 +1,21 @@
 <html>
 
 <body>
-    <h1>Category</h1>
+    <h1>Unit</h1>
     <form action="/unit" method="post">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name"><br><br>
+        <label for="ean">EAN:</label>
+        <input type="text" id="ean" name="ean"><br><br>
+        <label for="flavour">Flavour:</label>
+        <input type="text" id="flavour" name="flavour"><br><br>
         <label for="category_name">Category:</label>
-        <input type="text" id="category_name" name="category_name"><br><br>
+        <select id="category_name" name="category_name">
+            {{range .}}
+            <option value="{{.Name}}">{{.Name}}</option>
+            {{end}}
+        </select><br><br>
+
         <input type="submit" value="Submit">
     </form>
 </body>

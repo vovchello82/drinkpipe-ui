@@ -46,6 +46,7 @@ func main() {
 	category.PUT("/:id", h.PutCategory)
 
 	unit := e.Group("/unit")
+	unit.GET("/new", h.GetUpdateUnit)
 	unit.GET("", h.GetUnits)
 	unit.POST("", h.PostUnit)
 	unit.GET("/:id", h.GetUnit)

@@ -29,12 +29,18 @@ func (h Handler) GetUnit(c echo.Context) error {
 
 func (h Handler) GetUpdateUnit(c echo.Context) error {
 	log.Println("edit single")
-	return c.Render(http.StatusOK, "editUnit.html", nil)
+	return c.Render(http.StatusOK, "updateUnit.html", categories)
 }
 
 func (h Handler) PostUnit(c echo.Context) error {
-	log.Println("create")
-	return c.Render(http.StatusOK, unitTemplate, nil)
+	u := new(Unit)
+
+	if err := c.Bind(u); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	log.Println("created %u", u)
+	return c.Render(http.StatusCreated, unitTemplate, nil)
 }
 
 func (h Handler) DeleteUnit(c echo.Context) error {
