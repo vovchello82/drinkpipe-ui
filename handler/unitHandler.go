@@ -9,6 +9,14 @@ import (
 
 const unitTemplate = "unit.html"
 
+type Unit struct {
+	Id           string `json:"id,omitempty" form:"id,omitempty"`
+	Name         string `json:"name" form:"name" validate:"required"`
+	EAN          string `json:"ean" form:"ean"`
+	CategoryName string `json:"category_name" form:"category_name" validate:"required"`
+	Flavour      string `json:"flavour" form:"flavour"`
+}
+
 func (h Handler) GetUnits(c echo.Context) error {
 	log.Println("get all")
 	return c.Render(http.StatusOK, unitTemplate, nil)
@@ -17,6 +25,11 @@ func (h Handler) GetUnits(c echo.Context) error {
 func (h Handler) GetUnit(c echo.Context) error {
 	log.Println("get single")
 	return c.Render(http.StatusOK, unitTemplate, nil)
+}
+
+func (h Handler) GetUpdateUnit(c echo.Context) error {
+	log.Println("edit single")
+	return c.Render(http.StatusOK, "editUnit.html", nil)
 }
 
 func (h Handler) PostUnit(c echo.Context) error {
