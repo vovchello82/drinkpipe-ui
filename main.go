@@ -2,7 +2,9 @@ package main
 
 import (
 	"drinkpipe-ui/handler"
+	"drinkpipe-ui/store"
 	"io"
+	"log"
 	"net/http"
 
 	"html/template"
@@ -30,7 +32,15 @@ func main() {
 	}
 	e.Renderer = renderer
 
-	h := &handler.Handler{}
+	store, err := store.NewStoreRedis()
+
+	if err != nil {
+		log.Fatalln("redis store unavaiable")
+	}
+	h := &handler.Handler{
+		Repository: store,
+	}
+
 	e.Use(middleware.Logger())
 	mix := e.Group("/mixture")
 	mix.GET("", h.GetMixtures)
