@@ -1,17 +1,13 @@
 package handler
 
 import (
-	"drinkpipe-ui/store"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
-
-var categories = map[string]*Category{}
 
 const categoryTemplate = "category.html"
 
@@ -56,12 +52,13 @@ func (c *Category) ConvertToJson() ([]byte, error) {
 	return value, nil
 }
 
-func (c *Category) ConvertFromJson(jsonString []byte) (store.Entity, error) {
-	if err := json.Unmarshal(jsonString, &c); err != nil {
+func ConvertFromJson(jsonString []byte) (*Category, error) {
+	cat := new(Category)
+	if err := json.Unmarshal(jsonString, &cat); err != nil {
 		return nil, err
 	}
 
-	return c, nil
+	return cat, nil
 }
 
 func (p Piece) GetId() string {
@@ -71,13 +68,16 @@ func (p Piece) GetId() string {
 func (h *Handler) GetCategories(c echo.Context) error {
 
 	if values, err := h.Repository.GetAll(categoryKeyPrefix); err == nil {
-		log.Println("get all from redis")
+		cats := make(map[string]*Category, len(values))
 		for _, v := range values {
-			fmt.Println(v)
+			if cat, err := ConvertFromJson([]byte(v)); err == nil {
+				cats[cat.Id] = cat
+			}
 		}
+		return c.Render(http.StatusOK, categoryTemplate, cats)
 	}
 
-	return c.Render(http.StatusOK, categoryTemplate, categories)
+	return c.Render(http.StatusOK, categoryTemplate, []*Category{})
 }
 
 func (h *Handler) GetNewCategory(c echo.Context) error {
@@ -89,15 +89,21 @@ func (h *Handler) GetNewCategory(c echo.Context) error {
 
 func (h *Handler) GetEditCategory(c echo.Context) error {
 	var id string
+	//TODO VZ path param object binding
 	echo.PathParamsBinder(c).String("id", &id)
 	log.Println("edit single: ", id)
 
-	category := categories[id]
+	//TODO VZ error handling 404
+	catJson, _ := h.Repository.GetById(id, categoryKeyPrefix)
 
-	return c.Render(http.StatusOK, "editCategory.html", map[string]interface{}{
-		"Category": category,
-		"types":    categoryTypes,
-	})
+	if cat, err := ConvertFromJson([]byte(catJson)); err == nil {
+		return c.Render(http.StatusOK, "editCategory.html", map[string]interface{}{
+			"Category": cat,
+			"types":    categoryTypes,
+		})
+	}
+
+	return h.GetCategories(c)
 }
 
 func (h *Handler) GetCategory(c echo.Context) error {
@@ -113,19 +119,13 @@ func (h *Handler) PostCategory(c echo.Context) error {
 	}
 
 	cat.Id = uuid.New().String()
-	categories[cat.Id] = cat
-	log.Printf("created %s", cat)
-
 	if err := h.Repository.Persist(cat, categoryKeyPrefix); err != nil {
-		log.Println("Error on persisting", err.Error())
-	}
-	if values, err := h.Repository.GetAll(categoryKeyPrefix); err == nil {
-		for _, v := range values {
-			fmt.Println(v)
-		}
+		log.Println("error on cat persisting", err.Error())
+	} else {
+		log.Printf("created %s", cat)
 	}
 
-	return c.Render(http.StatusCreated, categoryTemplate, categories)
+	return h.GetCategories(c)
 }
 
 func (h *Handler) DeleteCategory(c echo.Context) error {
@@ -139,11 +139,18 @@ func (h *Handler) PutCategory(c echo.Context) error {
 	if err := c.Bind(cat); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
+	//TODO VZ error handling 404
+	categoryJson, _ := h.Repository.GetById(c.Param("id"), categoryKeyPrefix)
 
-	log.Printf("put single: %s", cat)
-	category := categories[c.Param("id")]
-	category.Name = cat.Name
-	category.Type = cat.Type
+	if category, err := ConvertFromJson([]byte(categoryJson)); err == nil {
+		category.Name = cat.Name
+		category.Type = cat.Type
+		if err := h.Repository.Persist(category, categoryKeyPrefix); err != nil {
+			log.Println("error on cat persisting", err.Error())
+		} else {
+			log.Printf("updated %s", cat)
+		}
+	}
 
-	return c.Render(http.StatusOK, categoryTemplate, categories)
+	return h.GetCategories(c)
 }

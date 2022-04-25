@@ -30,7 +30,7 @@ func (h Handler) GetUnit(c echo.Context) error {
 func (h Handler) GetUpdateUnit(c echo.Context) error {
 	log.Println("edit single")
 
-	return c.Render(http.StatusOK, "updateUnit.html", categories)
+	return c.Render(http.StatusOK, "updateUnit.html", map[string]*Unit{})
 }
 
 func (h Handler) PostUnit(c echo.Context) error {
