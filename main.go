@@ -39,11 +39,13 @@ func main() {
 	mix.PUT("/:id", h.PutMixture)
 
 	category := e.Group("/category")
-	category.GET("/edit", h.EditCategory)
 	category.GET("", h.GetCategories)
+	category.GET("/new", h.GetNewCategory)
 	category.POST("", h.PostCategory)
 	category.GET("/:id", h.GetCategory)
+	category.GET("/:id/edit", h.GetEditCategory)
 	category.PUT("/:id", h.PutCategory)
+	category.POST("/:id", h.PutCategory)
 
 	unit := e.Group("/unit")
 	unit.GET("/new", h.GetUpdateUnit)

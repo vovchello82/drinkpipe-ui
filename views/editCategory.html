@@ -2,16 +2,18 @@
 
 <body>
     <h1>Category</h1>
-    <form action="/category" method="post">
+    <form action="/category/{{.Category.Id}}" method="post">
+        <label for="id">Id:</label>
+        <input type="text" id="id" name="id" disabled value="{{.Category.Id}}"><br><br>
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name"><br><br>
+        <input type="text" id="name" name="name" value="{{.Category.Name}}"><br><br>
         <label for="type">Type</label>
         <select id="type" name="type">
-            <option value="none">unknown</option>
-            <option value="food">food</option>
-            <option value="none_food">none food</option>
-            <option value="alcohol">alcohol</option>
-            <option value="none_alcohol">none alcohol</option>
+            {{ range $type := .types }}
+            <option value="{{ $type }}" {{ if eq $type $.Category.Type }}selected="selected" {{ end }}>{{ $type
+                }}
+            </option>
+            {{ end }}
         </select><br><br>
         <input type="submit" value="Submit">
     </form>

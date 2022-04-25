@@ -5,10 +5,14 @@
     <ul>
         {{range .}}
         <li>
-            name: {{.Name}} type: {{.Type}}
+            name: {{.Name}} type: {{.Type}} <span>
+                [<a href="/category/{{.Id}}/edit">edit</a>]</p>
+            </span>
         </li>
         {{end}}
     </ul>
+
+    <p>[<a href="/category/new">Create</a>]</p>
 </body>
 
 </html>
