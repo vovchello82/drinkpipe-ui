@@ -3,6 +3,7 @@ package store
 import (
 	"errors"
 	"log"
+	"os"
 	"regexp"
 
 	"github.com/go-redis/redis"
@@ -20,9 +21,15 @@ type EntityStore interface {
 }
 
 func NewStoreRedis() (*StoreRedis, error) {
+	addr, found := os.LookupEnv("REDIS_ADDR")
+
+	if !found {
+		addr = "localhost:6379"
+	}
+
 	sr := &StoreRedis{
 		redis: redis.NewClient(&redis.Options{
-			Addr:     "localhost:6379",
+			Addr:     addr,
 			Password: "",
 			DB:       0,
 		}),
