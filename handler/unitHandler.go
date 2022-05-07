@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
@@ -64,6 +65,7 @@ func (h *Handler) GetNewUnit(c echo.Context) error {
 			}
 
 		}
+		log.Println("categories: ", categories)
 		return c.Render(http.StatusOK, "newUnit.html", map[string]interface{}{
 			"categories": categories,
 		})
@@ -77,7 +79,7 @@ func (h Handler) GetUnit(c echo.Context) error {
 	return c.Render(http.StatusOK, unitTemplate, nil)
 }
 
-func (h Handler) GetUpdateUnit(c echo.Context) error {
+func (h Handler) GetEditUnit(c echo.Context) error {
 	log.Println("edit single")
 
 	return c.Render(http.StatusOK, "updateUnit.html", map[string]*Unit{})
@@ -90,8 +92,13 @@ func (h Handler) PostUnit(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	log.Println("created %u", u)
-	return c.Render(http.StatusCreated, unitTemplate, nil)
+	u.Id = uuid.New().String()
+	if err := h.Repository.Persist(u, unitKeyPrefix); err != nil {
+		log.Println("Error on persisting unit: ", err.Error())
+		return c.Render(http.StatusInternalServerError, unitTemplate, nil)
+	}
+
+	return h.GetUnits(c)
 }
 
 func (h Handler) DeleteUnit(c echo.Context) error {
@@ -120,5 +127,5 @@ func (h Handler) PutUnit(c echo.Context) error {
 		}
 	}
 
-	return c.Render(http.StatusOK, unitTemplate, nil)
+	return h.GetUnits(c)
 }

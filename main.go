@@ -59,10 +59,11 @@ func main() {
 	category.POST("/:id", h.PutCategory)
 
 	unit := main.Group("/unit")
-	unit.GET("/new", h.GetUpdateUnit)
+	unit.GET("/new", h.GetNewUnit)
 	unit.GET("", h.GetUnits)
 	unit.POST("", h.PostUnit)
 	unit.GET("/:id", h.GetUnit)
+	unit.GET("/:id/edit", h.GetEditUnit)
 	unit.PUT("/:id", h.PutUnit)
 
 	e.Logger.Fatal(e.Start(":1323"))
