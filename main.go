@@ -42,13 +42,14 @@ func main() {
 	}
 
 	e.Use(middleware.Logger())
-	mix := e.Group("/mixture")
+	main := e.Group("/dp")
+	mix := main.Group("/mixture")
 	mix.GET("", h.GetMixtures)
 	mix.POST("", h.PostMixture)
 	mix.GET("/:id", h.GetMixture)
 	mix.PUT("/:id", h.PutMixture)
 
-	category := e.Group("/category")
+	category := main.Group("/category")
 	category.GET("", h.GetCategories)
 	category.GET("/new", h.GetNewCategory)
 	category.POST("", h.PostCategory)
@@ -57,7 +58,7 @@ func main() {
 	category.PUT("/:id", h.PutCategory)
 	category.POST("/:id", h.PutCategory)
 
-	unit := e.Group("/unit")
+	unit := main.Group("/unit")
 	unit.GET("/new", h.GetUpdateUnit)
 	unit.GET("", h.GetUnits)
 	unit.POST("", h.PostUnit)

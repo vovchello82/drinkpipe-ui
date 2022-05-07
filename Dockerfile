@@ -21,7 +21,7 @@ RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -o /drinkpipe-ui
 ##
 FROM gcr.io/distroless/base-debian11
 
-EXPOSE 3000
+EXPOSE 1323
 
 USER nonroot:nonroot
 WORKDIR /

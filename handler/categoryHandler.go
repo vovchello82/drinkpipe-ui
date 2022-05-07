@@ -52,7 +52,7 @@ func (c *Category) ConvertToJson() ([]byte, error) {
 	return value, nil
 }
 
-func ConvertFromJson(jsonString []byte) (*Category, error) {
+func convertCategoryFromJson(jsonString []byte) (*Category, error) {
 	cat := new(Category)
 	if err := json.Unmarshal(jsonString, &cat); err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (h *Handler) GetCategories(c echo.Context) error {
 	if values, err := h.Repository.GetAll(categoryKeyPrefix); err == nil {
 		cats := make(map[string]*Category, len(values))
 		for _, v := range values {
-			if cat, err := ConvertFromJson([]byte(v)); err == nil {
+			if cat, err := convertCategoryFromJson([]byte(v)); err == nil {
 				cats[cat.Id] = cat
 			}
 		}
@@ -96,7 +96,7 @@ func (h *Handler) GetEditCategory(c echo.Context) error {
 	//TODO VZ error handling 404
 	catJson, _ := h.Repository.GetById(id, categoryKeyPrefix)
 
-	if cat, err := ConvertFromJson([]byte(catJson)); err == nil {
+	if cat, err := convertCategoryFromJson([]byte(catJson)); err == nil {
 		return c.Render(http.StatusOK, "editCategory.html", map[string]interface{}{
 			"Category": cat,
 			"types":    categoryTypes,
@@ -142,7 +142,7 @@ func (h *Handler) PutCategory(c echo.Context) error {
 	//TODO VZ error handling 404
 	categoryJson, _ := h.Repository.GetById(c.Param("id"), categoryKeyPrefix)
 
-	if category, err := ConvertFromJson([]byte(categoryJson)); err == nil {
+	if category, err := convertCategoryFromJson([]byte(categoryJson)); err == nil {
 		category.Name = cat.Name
 		category.Type = cat.Type
 		if err := h.Repository.Persist(category, categoryKeyPrefix); err != nil {

@@ -2,6 +2,17 @@
 
 <body>
     <h1>Units</h1>
+    <ul>
+        {{range .}}
+        <li>
+            name: {{.Name}} category: {{.Category}} <span>
+                [<a href="/dp/unti/{{.Id}}/edit">edit</a>]</p>
+            </span>
+        </li>
+        {{end}}
+    </ul>
+
+    <p>[<a href="/dp/unti/new">Create</a>]</p>
 </body>
 
 </html>
