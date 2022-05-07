@@ -1,0 +1,22 @@
+<html>
+
+<body>
+    <h1>Unit</h1>
+    <form action="/dp/unit" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="name">EAN:</label>
+        <input type="text" id="name" name="ean"><br><br>
+        <label for="name">Flavour:</label>
+        <input type="text" id="name" name="flavour"><br><br>
+        <label for="type">Category</label>
+        <select id="type" name="type">
+            {{ range $catName, $catType := .categories }}
+            <option value="{{ $catName }}">{{ $catName }} : {{ $catType }}</option>
+            {{ end }}
+        </select><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
