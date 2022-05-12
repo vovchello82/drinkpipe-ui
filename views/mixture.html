@@ -2,6 +2,17 @@
 
 <body>
     <h1>Mixtures</h1>
+    <ul>
+        {{range .}}
+        <li>
+            name: {{.Name}} <span>
+                [<a href="/dp/mixture/{{.Id}}/edit">edit</a>]</p>
+            </span>
+        </li>
+        {{end}}
+    </ul>
+
+    <p>[<a href="/dp/mixture/new">Create</a>]</p>
 </body>
 
 </html>

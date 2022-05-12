@@ -48,6 +48,8 @@ func main() {
 	mix.POST("", h.PostMixture)
 	mix.GET("/:id", h.GetMixture)
 	mix.PUT("/:id", h.PutMixture)
+	mix.POST("/:id", h.PutMixture)
+	mix.GET("/:id/edit", h.GetEditMixture)
 
 	category := main.Group("/category")
 	category.GET("", h.GetCategories)
@@ -65,6 +67,7 @@ func main() {
 	unit.GET("/:id", h.GetUnit)
 	unit.GET("/:id/edit", h.GetEditUnit)
 	unit.PUT("/:id", h.PutUnit)
+	unit.POST("/:id", h.PutUnit)
 
 	e.Logger.Fatal(e.Start(":1323"))
 

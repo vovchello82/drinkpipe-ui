@@ -65,7 +65,6 @@ func (h *Handler) GetNewUnit(c echo.Context) error {
 			}
 
 		}
-		log.Println("categories: ", categories)
 		return c.Render(http.StatusOK, "newUnit.html", map[string]interface{}{
 			"categories": categories,
 		})
@@ -80,9 +79,36 @@ func (h Handler) GetUnit(c echo.Context) error {
 }
 
 func (h Handler) GetEditUnit(c echo.Context) error {
-	log.Println("edit single")
+	var id string
+	//TODO VZ path param object binding
+	echo.PathParamsBinder(c).String("id", &id)
+	log.Println("edit single: ", id)
 
-	return c.Render(http.StatusOK, "updateUnit.html", map[string]*Unit{})
+	//TODO VZ error handling 404
+	unitJson, _ := h.Repository.GetById(id, unitKeyPrefix)
+
+	log.Println("edit single:", id)
+
+	categories := make(map[string]string)
+	if values, err := h.Repository.GetAll(categoryKeyPrefix); err == nil {
+		categories = make(map[string]string, len(values))
+
+		for _, v := range values {
+			if cat, err := convertCategoryFromJson([]byte(v)); err == nil {
+				categories[cat.Name] = cat.Type
+			}
+
+		}
+	}
+
+	if unit, err := convertUnitFromJson([]byte(unitJson)); err == nil {
+		return c.Render(http.StatusOK, "updateUnit.html", map[string]interface{}{
+			"Unit":       unit,
+			"categories": categories,
+		})
+	}
+
+	return h.GetUnits(c)
 }
 
 func (h Handler) PostUnit(c echo.Context) error {

@@ -1,0 +1,24 @@
+<html>
+
+<body>
+    <h1>Mixture</h1>
+    <form action="/dp/mixture/{{.Mixture.Id}}" method="post">
+        <label for="id">Id:</label>
+        <input type="text" id="id" name="id" disabled value="{{.Mixture.Id}}"><br><br>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{.Mixture.Name}}"><br><br>
+        <label for="name">Description:</label>
+        <input type="text" id="description" name="description" value="{{.Mixture.Description}}"><br><br>
+        <label for="type">Type</label>
+        <select id="type" name="type">
+            {{ range $type := .Mixture.Ingredients }}
+            <option value="{{ $type }}" {{ if eq $type $.Category.Type }}selected="selected" {{ end }}>{{ $type
+                }}
+            </option>
+            {{ end }}
+        </select><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
