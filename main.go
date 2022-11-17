@@ -69,6 +69,11 @@ func main() {
 	unit.PUT("/:id", h.PutUnit)
 	unit.POST("/:id", h.PutUnit)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	appPort = 1323
+	if port, found := os.LookupEnv("APP_PORT"); found {
+		appPort = port
+	}
+
+	e.Logger.Fatal(e.Start(":"+appPort))
 
 }
